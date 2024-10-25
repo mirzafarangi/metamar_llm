@@ -6,3 +6,42 @@ __pycache__/
 .Rhistory
 .RData
 .Rproj.user/
+
+# Environment
+.env
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Data
+*.csv
+*.xlsx
+!tests/data/**/*.csv
+!tests/data/**/*.xlsx
+!shiny/test_data/**/*.csv
+!shiny/test_data/**/*.xlsx

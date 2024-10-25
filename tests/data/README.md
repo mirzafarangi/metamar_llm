@@ -1,146 +1,106 @@
-# Meta-Mar LLM Enhanced
+# Meta-Mar Test Data Documentation
 
 ## Overview
-Meta-Mar LLM Enhanced is an AI-powered meta-analysis service that combines statistical meta-analysis with advanced AI interpretation capabilities. This project enhances the traditional meta-analysis process by integrating GPT-4 and Claude for more structuralized result interpretation and reporting.
+This directory contains test data files for validating Meta-Mar's functionality across different types of meta-analyses.
 
-## Key Features
-- Meta-analysis calculation and visualization
-- AI-powered result interpretation using:
-  * GPT-4 for detailed statistical explanations
-  * Claude for comparative analysis
-- Interactive R Shiny web interface
-- Comprehensive statistical reporting
-- Publication bias assessment
-- Heterogeneity analysis
+## Data Structure
 
-## Tech Stack
-- **R**: Statistical computing and Shiny web interface
-- **Python**: AI integration and backend processing
-- **AI Models**: OpenAI GPT-4, Anthropic Claude
-- **Frameworks**: LangChain for AI integration
+### Continuous Outcome Data
+Location: `continuous/`
 
-## Installation
+#### example1.csv
+Basic mean difference structure:
+- studlab: Study identifier
+- n.e: Sample size (experimental group)
+- mean.e: Mean (experimental group)
+- sd.e: Standard deviation (experimental group)
+- n.c: Sample size (control group)
+- mean.c: Mean (control group)
+- sd.c: Standard deviation (control group)
+- subgroup: Optional subgroup identifier
+- year: Publication year
 
-### Prerequisites
-- R (>= 4.0.0)
-- Python (>= 3.10)
-- Conda or Miniconda
+#### example2.xlsx
+Extended structure with median/IQR:
+- studlab: Study identifier
+- n.e: Sample size (experimental)
+- median.e: Median (experimental)
+- q1.e: First quartile (experimental)
+- q3.e: Third quartile (experimental)
+- n.c: Sample size (control)
+- median.c: Median (control)
+- q1.c: First quartile (control)
+- q3.c: Third quartile (control)
 
-### Setup
-1. Clone the repository
-```bash
-git clone [your-repository-url]
-cd metamar_llm
+### Binary Outcome Data
+Location: `binary/`
+
+#### example1.csv
+Basic binary outcome structure:
+- studlab: Study identifier
+- event.e: Events in experimental group
+- n.e: Total sample (experimental)
+- event.c: Events in control group
+- n.c: Total sample (control)
+- subgroup: Optional subgroup identifier
+
+#### example2.xlsx
+Extended binary structure:
+- Additional fields:
+  * cluster: Cluster identifier
+  * rho: Intracluster correlation
+  * year: Publication year
+  * quality: Study quality score
+
+### Correlation Data
+Location: `correlation/`
+
+#### example1.csv
+Basic correlation structure:
+- studlab: Study identifier
+- cor: Correlation coefficient
+- n: Sample size
+- subgroup: Optional subgroup identifier
+
+#### example2.xlsx
+Extended correlation structure:
+- Additional fields:
+  * year: Publication year
+  * quality: Study quality
+  * measure_type: Correlation measure type
+
+## Data Validation Rules
+
+### Continuous Data
+- n.e, n.c > 0
+- sd.e, sd.c ≥ 0
+- q1 < median < q3
+
+### Binary Data
+- 0 ≤ events ≤ n
+- n.e, n.c > 0
+
+### Correlation Data
+- -1 ≤ cor ≤ 1
+- n > 0
+
+## Usage Examples
+```python
+from metamar.utils.data_loader import DataLoader
+
+# Load continuous data
+loader = DataLoader()
+cont_data = loader.load_file("continuous/example1.csv", "continuous")
+
+# Load binary data
+bin_data = loader.load_file("binary/example1.csv", "binary")
+
+# Load correlation data
+cor_data = loader.load_file("correlation/example1.csv", "correlation")
 ```
 
-2. Create and activate Python environment
-```bash
-conda create -n metamar_llm python=3.10
-conda activate metamar_llm
-pip install -r requirements.txt
-```
-
-3. Configure environment variables
-- Copy `.env.example` to `.env`
-- Add your API keys:
-  * OPENAI_API_KEY
-  * ANTHROPIC_API_KEY
-
-4. Install R dependencies
-```R
-install.packages(c("shiny", "meta", "metafor", "dplyr", "ggplot2"))
-```
-
-## Project Structure
-```
-metamar_llm/                      # Root directory
-│
-├── src/                         # Python source code
-│   └── metamar/
-│       ├── __init__.py
-│       ├── llm/                # LLM integration code
-│       │   ├── __init__.py
-│       │   ├── gpt4_handler.py
-│       │   ├── claude_handler.py
-│       │   └── report_generator.py
-│       ├── utils/              # Utility functions
-│       │   ├── __init__.py
-│       │   ├── data_loader.py
-│       │   └── helpers.py
-│       └── config/             # Configuration management
-│           ├── __init__.py
-│           └── settings.py
-│
-├── tests/                      # Python tests
-│   ├── __init__.py
-│   ├── test_llm_handlers.py
-│   ├── test_data_loader.py
-│   └── data/                  # Test data for Python tests
-│       ├── README.md         # Test data documentation
-│       ├── continuous/
-│       │   ├── example1.csv
-│       │   └── example2.xlsx
-│       ├── binary/
-│       │   ├── example1.csv
-│       │   └── example2.xlsx
-│       └── correlation/
-│           ├── example1.csv
-│           └── example2.xlsx
-│
-├── notebooks/                  # Jupyter notebooks
-│   ├── 01_llm_exploration.ipynb
-│   ├── 02_prompt_testing.ipynb
-│   └── 03_performance_analysis.ipynb
-│
-├── shiny/                     # R Shiny application
-│   ├── app.R                  # Main Shiny app
-│   ├── R/                     # R functions
-│   │   ├── documentation_content.R
-│   │   ├── ui_functions.R
-│   │   └── server_functions.R
-│   ├── www/                  # Web assets
-│   │   ├── css/
-│   │   │   └── styles.css
-│   │   └── js/
-│   │       └── custom.js
-│   └── test_data/           # Test data for Shiny
-│       ├── continuous/
-│       ├── binary/
-│       └── correlation/
-│
-├── docs/                     # Documentation
-│   ├── setup.md             # Setup instructions
-│   ├── api_integration.md   # API integration guide
-│   ├── shiny_integration.md # Shiny integration guide
-│   └── examples/            # Example analyses and outputs
-│
-├── config/                  # Configuration files
-│   ├── config.yml          # General configuration
-│   └── logging.yml         # Logging configuration
-│
-├── .env.example            # Example environment variables
-├── .gitignore             # Git ignore rules
-├── requirements.txt        # Python dependencies
-├── environment.yml        # Conda environment
-└── README.md              # Project documentation
-```
-## Usage
-1. Start the Shiny application
-2. Upload your meta-analysis data
-3. Configure analysis parameters
-4. Run analysis
-5. Get AI-enhanced interpretation
-
-## Development Status
-🚧 Currently under active development
-
-## Contributing
-Issues and pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-[MIT](https://choosealicense.com/licenses/mit/)
-
-## Acknowledgments
-- Original Meta-Mar project contributors
-- R meta-analysis community
-- OpenAI and Anthropic for AI capabilities
+## Adding New Test Data
+1. Follow the structure patterns above
+2. Include relevant metadata columns
+3. Validate against requirements
+4. Update this documentation
