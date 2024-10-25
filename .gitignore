@@ -1,16 +1,8 @@
-# Environment files
 .env
-venv/
+.DS_Store
 __pycache__/
 *.pyc
-
-# Jupyter
 .ipynb_checkpoints/
-
-# R
 .Rhistory
 .RData
 .Rproj.user/
-
-# OS
-.DS_Store
